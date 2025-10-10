@@ -1,0 +1,3 @@
+#This is an example data for importing into Active Directory 
+SamAccountName,GivenName,Surname,DisplayName,UserPrincipalName,OU
+aunver,Akin,Unver,Akin Unver,aunver@au.lab,"OU=admins,DC=au,DC=lab"
