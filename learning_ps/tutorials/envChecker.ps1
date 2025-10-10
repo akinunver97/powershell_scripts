@@ -1,4 +1,5 @@
 Clear-Host 
+Import-Module C:\Users\au\powershell_scripts\learning_ps\tutorials\MailModule.ps1
 
 $ServerListFilePath = "C:\Users\au\powershell_scripts\learning_ps\tutorials\envCheckerList.csv"
 
