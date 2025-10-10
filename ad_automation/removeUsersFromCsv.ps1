@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
- CSV'den AD kullanıcılarını disable eder ve 7 gün sonra silinecek şekilde işaretler.
+ CSV'den AD kullanıcılarını disable eder ve 7 gün sonra otomatik silinir.
 .INPUTS
  CSV with headers: SamAccountName
 #>
@@ -40,7 +40,7 @@ function Log {
 }
 
 # --- SCRIPT START ---
-Log "Disable/Remove script started. CSV: $CsvPath. WhatIfMode: $WhatIfMode" -Path $LogPath
+Log "Disable/Auto-Remove script started. CSV: $CsvPath. WhatIfMode: $WhatIfMode" -Path $LogPath
 
 # Import CSV
 try {
@@ -65,12 +65,12 @@ foreach ($u in $users) {
     }
 }
 
-# Kullanıcıları ekranda listele ve onay iste
 if ($usersToProcess.Count -eq 0) {
     Log "No users to process." -Path $LogPath
     exit 0
 }
 
+# Kullanıcıları ekranda listele ve onay iste
 Write-Host "The following users will be disabled and scheduled for removal in 7 days:`n"
 $usersToProcess | ForEach-Object { Write-Host $_.SamAccountName }
 
@@ -85,7 +85,7 @@ foreach ($user in $usersToProcess) {
     try {
         if ($WhatIfMode) {
             Log "(WhatIf) Would disable user: $($user.SamAccountName)" -Path $LogPath
-            Log "(WhatIf) Would schedule removal in 7 days: $($user.SamAccountName)" -Path $LogPath
+            Log "(WhatIf) Would schedule automatic removal in 7 days: $($user.SamAccountName)" -Path $LogPath
             continue
         }
 
@@ -93,16 +93,44 @@ foreach ($user in $usersToProcess) {
         Set-ADUser -Identity $user -Enabled $false
         Log "Disabled user: $($user.SamAccountName)" -Path $LogPath
 
-        # Schedule removal in 7 days
-        $removeDate = (Get-Date).AddDays(7)
-        Set-ADUser -Identity $user -Description "Scheduled for deletion on $($removeDate.ToString('yyyy-MM-dd'))"
-        Log "User $($user.SamAccountName) scheduled for removal on $($removeDate.ToString('yyyy-MM-dd'))" -Path $LogPath
+        # --- ScriptGenerated klasör kontrolü ---
+        $scriptFolder = "C:\PowershellScripts\ScriptGenerated"
+        if (-not (Test-Path -Path $scriptFolder)) {
+            try {
+                New-Item -Path $scriptFolder -ItemType Directory -Force | Out-Null
+                Log "Created script folder: $scriptFolder" -Path $LogPath
+            } catch {
+                Log "ERROR: Failed to create script folder $scriptFolder : $_" -Path $LogPath
+                continue
+            }
+        }
 
-        # Opsiyonel: buraya bir scheduled task veya script eklenebilir, 7 gün sonra Remove-ADUser çalıştırmak için
+        # Remove script içeriği (her kullanıcı için)
+        $removeScriptContent = @"
+Import-Module ActiveDirectory
+try {
+    Remove-ADUser -Identity '$($user.SamAccountName)' -Confirm:`$false
+} catch {
+    Write-Output 'ERROR removing $($user.SamAccountName): ' + `$_
+}
+"@
+
+        # Script dosyasını oluştur
+        $userScriptPath = Join-Path $scriptFolder "$($user.SamAccountName)_Remove.ps1"
+        $removeScriptContent | Set-Content -Path $userScriptPath -Force
+
+        # Scheduled Task oluştur
+        $action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -File `"$userScriptPath`""
+        $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddDays(7)
+        $taskName = "RemoveUser_$($user.SamAccountName)_$(Get-Random)"
+
+        Register-ScheduledTask -Action $action -Trigger $trigger -TaskName $taskName -Description "Auto remove AD user $($user.SamAccountName) in 7 days" -Force
+
+        Log "Scheduled automatic removal of $($user.SamAccountName) in 7 days via task $taskName" -Path $LogPath
 
     } catch {
         Log "ERROR processing $($user.SamAccountName) : $_" -Path $LogPath
     }
 }
 
-Log "Disable/Remove script finished." -Path $LogPath
+Log "Disable/Auto-Remove script finished." -Path $LogPath
