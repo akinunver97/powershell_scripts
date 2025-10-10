@@ -1,5 +1,5 @@
 #With Login Prompt
-Send-MailMessage -To 'aknnvr3@gmail.com' -From 'akin.unver97@gmail.com' -Subject 'An Email From Gmail Account' -Body 'Some Email content' -Credential (Get-Credential) -SmtpServer 'smtp.gmail.com' -Port 587 -UseSsl 
+Send-MailMessage -To 'akin.unver97@gmail.com' -From 'akin.unver97@gmail.com' -Subject 'An Email From Gmail Account' -Body 'Some Email content' -Credential (Get-Credential) -SmtpServer 'smtp.gmail.com' -Port 587 -UseSsl 
 
 
 #Proper
