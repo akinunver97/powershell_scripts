@@ -9,7 +9,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$CsvPath,
 
-    [string]$LogPath = "C:\PowershellScripts\Logs\DisableRemoveUsers_$(Get-Date -Format yyyyMMdd_HHmmss).log",
+    [string]$LogPath = "%HOME\PowershellScripts\Logs\DisableRemoveUsers_$(Get-Date -Format yyyyMMdd_HHmmss).log",
 
     [switch]$WhatIfMode
 )
@@ -94,7 +94,7 @@ foreach ($user in $usersToProcess) {
         Log "Disabled user: $($user.SamAccountName)" -Path $LogPath
 
         # --- ScriptGenerated klasör kontrolü ---
-        $scriptFolder = "C:\PowershellScripts\ScriptGenerated"
+        $scriptFolder = "$HOME\PowershellScripts\ScriptGenerated"
         if (-not (Test-Path -Path $scriptFolder)) {
             try {
                 New-Item -Path $scriptFolder -ItemType Directory -Force | Out-Null

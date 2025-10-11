@@ -13,7 +13,7 @@ param(
 
     [string]$DefaultOU = "OU=Users,DC=au,DC=lab",
 
-    [string]$LogPath = "C:\PowershellScripts\Logs\CreateUsers_$(Get-Date -Format yyyyMMdd_HHmmss).log",
+    [string]$LogPath = "$HOME\PowershellScripts\Logs\CreateUsers_$(Get-Date -Format yyyyMMdd_HHmmss).log",
 
     [switch]$WhatIfMode
 )
