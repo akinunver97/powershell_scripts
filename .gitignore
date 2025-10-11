@@ -1,3 +1,20 @@
-# Ignore all .log and .tmp files in all directories
+# PowerShell project .gitignore
+
+# Ignore logs and temp files globally
 *.log
 *.tmp
+Logs/
+logs/
+tmp/
+Temp/
+
+# Editor and system files
+.vscode/
+.idea/
+*.ps1~
+Thumbs.db
+.DS_Store
+
+# Backup or autosave files
+*.bak
+*.swp
