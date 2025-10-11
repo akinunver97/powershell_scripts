@@ -1,7 +1,5 @@
-Clear-Host
-
-$ServicesFilePath = "C:\Users\au\powershell_scripts\learning_ps\csv_files\Services.csv"
-$LogPath = "C:\Users\au\powershell_scripts\learning_ps\Logs"
+$ServicesFilePath = "$HOME\powershell_scripts\learning_ps\csv_files\Services.csv"
+$LogPath = "$HOME\powershell_scripts\learning_ps\Logs"
 $LogFile = "Services.log"
 $ServicesList = Import-Csv -Path $ServicesFilePath -Delimiter ','
 
@@ -19,7 +17,6 @@ if (Test-Path $FullLogPath) {
     if ($LogSize -ge $MaxLogSize) {
         $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
         $ArchiveName = "Services_$Timestamp.log"
-        $ArchivePath = Join-Path $LogPath $ArchiveName
         Rename-Item -Path $FullLogPath -NewName $ArchiveName
     }
 }
