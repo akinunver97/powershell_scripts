@@ -3,6 +3,7 @@
 # Ignore logs and temp files globally
 *.log
 *.tmp
+tutorials/Logs/
 Logs/
 logs/
 tmp/
