@@ -1,5 +1,5 @@
-$ServicesFilePath = "$HOME\powershell_scripts\learning_ps\csv_files\Services.csv"
-$LogPath = "$HOME\powershell_scripts\learning_ps\Logs"
+$ServicesFilePath = "$HOME\powershell_scripts\tutorials\csv_files\Services.csv"
+$LogPath = "$HOME\powershell_scripts\tutorials\Logs"
 $LogFile = "Services.log"
 $ServicesList = Import-Csv -Path $ServicesFilePath -Delimiter ','
 
