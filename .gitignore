@@ -1,1 +1,3 @@
-learning_ps/Logs
+# Ignore all .log and .tmp files in all directories
+*.log
+*.tmp
