@@ -1,21 +1,3 @@
-# PowerShell project .gitignore
-
-# Ignore logs and temp files globally
 *.log
 *.tmp
-tutorials/Logs/
-Logs/
-logs/
-tmp/
-Temp/
-
-# Editor and system files
-.vscode/
-.idea/
-*.ps1~
-Thumbs.db
-.DS_Store
-
-# Backup or autosave files
-*.bak
-*.swp
+tutorials\Logs
