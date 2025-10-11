@@ -1,10 +1,6 @@
-Clear-Host 
-Import-Module C:\Users\au\powershell_scripts\learning_ps\tutorials\MailModule.ps1
-#Proper
-$EmailFrom = "akin.unver97@gmail.com"
-$EmailTo = "akin.unver97@gmail.com"
 
-
+$EmailFrom = "sender@gmail.com"
+$EmailTo = "receiver@gmail.com"
 $SMTPServer = "smtp.gmail.com"
 $SMTPClient = New-Object Net.Mail.SmtpClient($SmtpServer, 587)
 $SMTPClient.EnableSsl = $true
@@ -14,7 +10,7 @@ $SMTPClient.Credentials = New-Object System.Net.NetworkCredential("account", "pa
 
 
 
-$ServerListFilePath = "C:\Users\au\powershell_scripts\learning_ps\tutorials\envCheckerList.csv"
+$ServerListFilePath = "csv_path"
 
 $ServerList = Import-Csv -Path $ServerListFilePath -Delimiter ','
 
