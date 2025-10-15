@@ -1,6 +1,6 @@
 # Incremental File/Folder Clone Script using Robocopy
 # Description: Detects if source is file or folder and performs incremental clone
-# Author: PowerShell Scripts Collection
+# Author: Akin Unver
 # Date: $(Get-Date -Format "yyyy-MM-dd")
 #
 # ROBOCOPY EXIT CODES (Bit Flags):
