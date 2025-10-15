@@ -1,14 +1,22 @@
 
 # Silent Package Uninstall Script for Windows
-# Description: Uninstalls NetWorker clients silently using winget
+# Description: Uninstalls packages silently using winget with confirmation
 # Author: PowerShell Scripts Collection
 # Date: $(Get-Date -Format "yyyy-MM-dd")
+#
+# Usage Examples:
+#   .\silent_package_uninstall.ps1                          # Interactive mode with confirmation
+#   .\silent_package_uninstall.ps1 -Force                   # Skip confirmation prompt
+#   .\silent_package_uninstall.ps1 -WhatIf                  # Show what would be uninstalled
+#   .\silent_package_uninstall.ps1 -PackagePattern "Adobe*" # Uninstall Adobe products
+#   .\silent_package_uninstall.ps1 -Verbose                 # Enable detailed logging
 
 param(
     [string]$PackagePattern = "NetWorker*",
     [string[]]$ExcludePackages = @("NetWorker Management Console"),
     [switch]$WhatIf,
-    [switch]$Verbose
+    [switch]$Verbose,
+    [switch]$Force
 )
 
 # Function to log messages
@@ -138,6 +146,38 @@ try {
     Write-Log "Found $($packagesToUninstall.Count) package(s) to uninstall:"
     foreach ($package in $packagesToUninstall) {
         Write-Log "  - $($package.Name) (ID: $($package.Id))"
+    }
+
+    # Show confirmation unless WhatIf or Force is used
+    if (-not $WhatIf -and -not $Force) {
+        Write-Host ""
+        Write-Host "=== UNINSTALL CONFIRMATION ===" -ForegroundColor Yellow
+        Write-Host "The following packages will be PERMANENTLY REMOVED:" -ForegroundColor Red
+        Write-Host ""
+        
+        foreach ($package in $packagesToUninstall) {
+            Write-Host "  ❌ $($package.Name)" -ForegroundColor Red
+            Write-Host "     ID: $($package.Id)" -ForegroundColor Gray
+            Write-Host "     Version: $($package.Version)" -ForegroundColor Gray
+            Write-Host ""
+        }
+        
+        Write-Host "WARNING: This action cannot be undone!" -ForegroundColor Red
+        Write-Host ""
+        
+        do {
+            $confirmation = Read-Host "Do you want to proceed with the uninstallation? (y/n)"
+            $confirmation = $confirmation.ToLower().Trim()
+        } while ($confirmation -notin @('yes', 'y', 'no', 'n'))
+        
+        if ($confirmation -in @('no', 'n')) {
+            Write-Log "Uninstallation cancelled by user." "INFO"
+            Write-Host "Operation cancelled. No packages were removed." -ForegroundColor Green
+            exit 0
+        }
+        
+        Write-Log "User confirmed uninstallation. Proceeding..." "INFO"
+        Write-Host ""
     }
 
     # Uninstall packages
